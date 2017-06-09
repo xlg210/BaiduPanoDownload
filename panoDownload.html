@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>百度全景图下载</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        img {
+            float: left;
+        }
+
+        body {
+            width: 8230px;
+        }
+
+        #container {
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        div {
+            display: block;
+        }
+
+        canvas {
+            border: 2px solid blue;
+        }
+    </style>
+    <script src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="width: 800px; left: 0;">
+    <div class="input-group">
+        <span class="input-group-addon">panoid</span>
+        <input id="sid" type="text" class="form-control" placeholder="sid" aria-describedby="basic-addon1"
+               value="09000300011606101347107845C">
+        <span class="input-group-addon">浏览百度全景时，地址栏中的panoid参数值</span>
+    </div>
+    <br/>
+    <div class="input-group">
+        <span class="input-group-addon">level</span>
+        <input id="level" type="text" class="form-control" placeholder="z" aria-describedby="basic-addon1"
+               value="5">
+        <span class="input-group-addon">清晰度级别，范围1-5</span>
+    </div>
+    <br/>
+    <div>
+        <button id="btn-download" type="button" class="btn btn-primary">开始下载</button>
+        <label id="info"></label>
+    </div>
+</div>
+<div id="container" style="left: 0;top: 150px;">
+</div>
+<script>
+    //    'http://pcsv0.map.bdimg.com/?qt=pdata&sid=09025200011604121107101439V&pos=2_1&z=4&udt=20160201',
+    var urlFormat = 'http://pcsv0.map.bdimg.com/?qt=pdata&sid={0}&pos={1}&z={2}';
+    var $btnDownload = $('#btn-download');
+    var $info = $('#info');
+    var $container = $('#container')
+
+    String.prototype.format = String.prototype.f = function () {
+        var s = this,
+            i = arguments.length;
+        while (i--) {
+            s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+        }
+        return s;
+    };
+
+    /**
+     * 下载全景
+     * @param sid  全景地图中(地址栏)的panoid
+     * @param level
+     */
+    var downloadPano = function (sid, level) {
+        //列数
+        var columns = Math.max(1, Math.pow(2, level - 1));
+        //行数
+        var rows = Math.max(1, Math.pow(2, level - 2));
+
+        for (var i = 0; i < rows; i++) {
+            var $li = $('<div/>');
+            $container.append($li);
+            for (var j = 0; j < columns; j++) {
+                var url = urlFormat.format(sid, i + '_' + j, level);
+//                    console.log(url);
+                $li.append('<img src="' + url + '"/>');
+            }
+        }
+
+    };
+
+
+    $btnDownload.click(function () {
+        $container.empty();
+        $info.text();
+        var sid = $('#sid').val();
+        var level = $('#level').val();
+
+        if (sid.length === 0 || level.length === 0) {
+            alert('参数不能为空!');
+            return;
+        }
+        if (level < 1 || level > 5) {
+            alert('level超限');
+            return;
+        }
+
+        downloadPano(sid, level);
+        var loadCount = 0;
+
+        var total = $('img').length;
+        $('img').load(function () {
+            loadCount++;
+            if (loadCount === total) {
+                setTimeout(function () {
+                    convert2Canvas();
+                    $btnDownload.removeAttr('disabled');
+                    $info.text('图片合并完成，右键保存图片');
+                }, 1000);
+            }
+            $info.text('loading:' + loadCount + '/' + total);
+        });
+
+        $btnDownload.attr('disabled', 'disabled');
+        setTimeout(function () {
+            $btnDownload.removeAttr('disabled');
+        }, 10000);
+
+
+        function convert2Canvas() {
+            var container = document.getElementById('container');
+            html2canvas(container, {
+                useCORS: true
+            }).then(function (canvas) {
+                console.log(canvas);
+                $container.append(canvas)
+                $container.find('div').remove();
+            });
+        }
+    });
+
+</script>
+</body>
+</html>
