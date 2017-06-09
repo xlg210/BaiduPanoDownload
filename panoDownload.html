@@ -54,7 +54,6 @@
 <div id="container" style="left: 0;top: 150px;">
 </div>
 <script>
-    //    'http://pcsv0.map.bdimg.com/?qt=pdata&sid=09025200011604121107101439V&pos=2_1&z=4&udt=20160201',
     var urlFormat = 'http://pcsv0.map.bdimg.com/?qt=pdata&sid={0}&pos={1}&z={2}';
     var $btnDownload = $('#btn-download');
     var $info = $('#info');
@@ -93,6 +92,21 @@
     };
 
 
+    /**
+     * 将container转化成canvas
+     */
+    function convert2Canvas() {
+        var container = document.getElementById('container');
+        html2canvas(container, {
+            useCORS: true
+        }).then(function (canvas) {
+            console.log(canvas);
+            $container.append(canvas)
+            $container.find('div').remove();
+        });
+    }
+
+
     $btnDownload.click(function () {
         $container.empty();
         $info.text();
@@ -128,18 +142,6 @@
         setTimeout(function () {
             $btnDownload.removeAttr('disabled');
         }, 10000);
-
-
-        function convert2Canvas() {
-            var container = document.getElementById('container');
-            html2canvas(container, {
-                useCORS: true
-            }).then(function (canvas) {
-                console.log(canvas);
-                $container.append(canvas)
-                $container.find('div').remove();
-            });
-        }
     });
 
 </script>
