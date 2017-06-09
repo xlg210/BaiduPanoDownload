@@ -7,7 +7,7 @@
 
 + panoid:全景id，从百度地图全景的模式下的地址栏获取。
 
-   如:http://map.baidu.com/#panoid\=__09002900011602211612290454A__&panotype=street&heading=90.15&pitch=0&l=12&tn=B_NORMAL_MAP&sc=0&newmap=1&shareurl=1&pid=09002900011602211612290454A
+   如: http: //map.baidu.com/#panoid=**09002900011602211612290454A**&panotype=street&heading=90.15&pitch=0&l=12&tn=B_NORMAL_MAP&sc=0&newmap=1&shareurl=1&pid=09002900011602211612290454A
 + level:精细度级别，范围 1 - 5
 
 ## 问题
